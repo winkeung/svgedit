@@ -640,6 +640,7 @@ TODOS
 					'#tool_save div': 'save',
 					'#tool_export div': 'export',
 					'#tool_open div div': 'open',
+					'#tool_open_url > div': 'open_url',
 					'#tool_import div div': 'import',
 					'#tool_source': 'source',
 					'#tool_docprops > div': 'docprops',
