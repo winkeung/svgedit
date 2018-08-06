@@ -583,6 +583,7 @@ TODOS
 					'new_image': 'clear.png',
 					'save': 'save.png',
 					'open': 'open.png',
+					'open_url': 'open_url.png',
 					'source': 'source.png',
 					'docprops': 'document-properties.png',
 					'wireframe': 'wireframe.png',
@@ -921,6 +922,7 @@ TODOS
 			var multiselected = false;
 			var editingsource = false;
 			var docprops = false;
+			var open_url = false;
 			var preferences = false;
 			var cur_context = '';
 			var origTitle = $('title:first').text();
