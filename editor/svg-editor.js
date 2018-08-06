@@ -702,8 +702,8 @@ TODOS
 					'#layer_moreopts': 'context_menu',
 					'#layerlist td.layervis': 'eye',
 
-					'#tool_source_save,#tool_docprops_save,#tool_prefs_save': 'ok',
-					'#tool_source_cancel,#tool_docprops_cancel,#tool_prefs_cancel': 'cancel',
+					'#tool_source_save,#tool_docprops_save,#tool_prefs_save,#tool_open_url_save': 'ok',
+					'#tool_source_cancel,#tool_docprops_cancel,#tool_prefs_cancel,#tool_open_url_cancel': 'cancel',
 
 					'#rwidthLabel, #iwidthLabel': 'width',
 					'#rheightLabel, #iheightLabel': 'height',
@@ -3754,24 +3754,10 @@ TODOS
 			};
 
 			var showOpenURL = function() {
-				if (docprops) {return;}
-				docprops = true;
+				if (open_url) {return;}
+				open_url = true;
 
-				// This selects the correct radio button by using the array notation
-				$('#image_save_opts input').val([$.pref('img_save')]);
-
-				// update resolution option with actual resolution
-				var res = svgCanvas.getResolution();
-				if (curConfig.baseUnit !== 'px') {
-					res.w = svgedit.units.convertUnit(res.w) + curConfig.baseUnit;
-					res.h = svgedit.units.convertUnit(res.h) + curConfig.baseUnit;
-				}
-
-				$('#canvas_width').val(res.w);
-				$('#canvas_height').val(res.h);
-				$('#canvas_title').val(svgCanvas.getDocumentTitle());
-
-				$('#svg_docprops').show();
+				$('#svg_open_url').show();
 			};
 			
 			var showPreferences = function() {
@@ -3837,6 +3823,11 @@ TODOS
 				$('#image_save_opts input').val([$.pref('img_save')]);
 				docprops = false;
 			};
+			
+			var hideOpenURL = function() {
+				$('#svg_open_url').hide();
+				open_url = false;
+			};
 
 			var hidePreferences = function() {
 				$('#svg_prefs').hide();
@@ -3880,6 +3871,43 @@ TODOS
 				hideDocProperties();
 			};
 
+			var saveOpenURL = function() {
+				// set title
+				var newTitle = $('#canvas_title').val();
+				updateTitle(newTitle);
+				svgCanvas.setDocumentTitle(newTitle);
+
+				// update resolution
+				var width = $('#canvas_width'), w = width.val();
+				var height = $('#canvas_height'), h = height.val();
+
+				if (w != 'fit' && !svgedit.units.isValidUnit('width', w)) {
+					$.alert(uiStrings.notification.invalidAttrValGiven);
+					width.parent().addClass('error');
+					return false;
+				}
+
+				width.parent().removeClass('error');
+
+				if (h != 'fit' && !svgedit.units.isValidUnit('height', h)) {
+					$.alert(uiStrings.notification.invalidAttrValGiven);
+					height.parent().addClass('error');
+					return false;
+				}
+
+				height.parent().removeClass('error');
+
+				if (!svgCanvas.setResolution(w, h)) {
+					$.alert(uiStrings.notification.noContentToFitTo);
+					return false;
+				}
+
+				// Set image save option
+				$.pref('img_save', $('#image_save_opts :checked').val());
+				updateCanvas();
+				hideDocProperties();
+			};
+			
 			var savePreferences = editor.savePreferences = function() {
 				// Set background
 				var color = $('#bg_blocks div.cur_background').css('background-color') || '#FFF';
@@ -3914,7 +3942,7 @@ TODOS
 
 			var cancelOverlays = function() {
 				$('#dialog_box').hide();
-				if (!editingsource && !docprops && !preferences) {
+				if (!editingsource && !docprops && !preferences && !open_url) {
 					if (cur_context) {
 						svgCanvas.leaveContext();
 					}
@@ -3933,7 +3961,10 @@ TODOS
 					hideDocProperties();
 				} else if (preferences) {
 					hidePreferences();
+				} else if (open_url) {
+					hideOpenURL();
 				}
+				
 				resetScrollPos();
 			};
 
@@ -4544,9 +4575,10 @@ TODOS
 					{sel: '#tool_import', fn: clickImport, evt: 'mouseup'},
 					{sel: '#tool_source', fn: showSourceEditor, evt: 'click', key: ['U', true]},
 					{sel: '#tool_wireframe', fn: clickWireframe, evt: 'click', key: ['F', true]},
-					{sel: '#tool_source_cancel,.overlay,#tool_docprops_cancel,#tool_prefs_cancel', fn: cancelOverlays, evt: 'click', key: ['esc', false, false], hidekey: true},
+					{sel: '#tool_source_cancel,.overlay,#tool_docprops_cancel,#tool_prefs_cancel,#tool_open_url_cancel', fn: cancelOverlays, evt: 'click', key: ['esc', false, false], hidekey: true},
 					{sel: '#tool_source_save', fn: saveSourceEditor, evt: 'click'},
 					{sel: '#tool_docprops_save', fn: saveDocProperties, evt: 'click'},
+					{sel: '#tool_open_url_save', fn: saveOpenURL, evt: 'click'},
 					{sel: '#tool_docprops', fn: showDocProperties, evt: 'mouseup'},
 					{sel: '#tool_prefs_save', fn: savePreferences, evt: 'click'},
 					{sel: '#tool_prefs_option', fn: function() {showPreferences(); return false;}, evt: 'mouseup'},

@@ -1119,6 +1119,7 @@ ul li.current {
 }
 
 #svg_docprops #svg_docprops_container,
+#svg_open_url #svg_open_url_container,
 #svg_prefs #svg_prefs_container {
 	position: absolute;
 	top: 50px;
@@ -1234,12 +1235,14 @@ ul li.current {
 }
 
 #svg_docprops button,
+#svg_open_url button,
 #svg_prefs button {
 	margin-top: 0;
 	margin-bottom: 5px;
 }
 
 #svg_docprops,
+#svg_open_url,
 #svg_prefs {
 	display: none;
 }

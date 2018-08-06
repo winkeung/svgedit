@@ -116,6 +116,9 @@ var svgEditor = (function($, editor) {'use strict';
 			
 			tool_docprops_cancel: common.cancel,
 			tool_docprops_save: common.ok,
+			
+			tool_open_url_cancel: common.cancel,
+			tool_open_url_save: common.ok,
 
 			tool_source_cancel: common.cancel,
 			tool_source_save: common.ok,
