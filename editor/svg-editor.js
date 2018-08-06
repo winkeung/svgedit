@@ -3872,40 +3872,8 @@ TODOS
 			};
 
 			var saveOpenURL = function() {
-				// set title
-				var newTitle = $('#canvas_title').val();
-				updateTitle(newTitle);
-				svgCanvas.setDocumentTitle(newTitle);
-
-				// update resolution
-				var width = $('#canvas_width'), w = width.val();
-				var height = $('#canvas_height'), h = height.val();
-
-				if (w != 'fit' && !svgedit.units.isValidUnit('width', w)) {
-					$.alert(uiStrings.notification.invalidAttrValGiven);
-					width.parent().addClass('error');
-					return false;
-				}
-
-				width.parent().removeClass('error');
-
-				if (h != 'fit' && !svgedit.units.isValidUnit('height', h)) {
-					$.alert(uiStrings.notification.invalidAttrValGiven);
-					height.parent().addClass('error');
-					return false;
-				}
-
-				height.parent().removeClass('error');
-
-				if (!svgCanvas.setResolution(w, h)) {
-					$.alert(uiStrings.notification.noContentToFitTo);
-					return false;
-				}
-
-				// Set image save option
-				$.pref('img_save', $('#image_save_opts :checked').val());
-				updateCanvas();
-				hideDocProperties();
+				
+				hideOpenURL();
 			};
 			
 			var savePreferences = editor.savePreferences = function() {
