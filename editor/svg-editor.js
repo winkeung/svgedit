@@ -3751,6 +3751,27 @@ TODOS
 				$('#svg_docprops').show();
 			};
 
+			var showOpenURL = function() {
+				if (docprops) {return;}
+				docprops = true;
+
+				// This selects the correct radio button by using the array notation
+				$('#image_save_opts input').val([$.pref('img_save')]);
+
+				// update resolution option with actual resolution
+				var res = svgCanvas.getResolution();
+				if (curConfig.baseUnit !== 'px') {
+					res.w = svgedit.units.convertUnit(res.w) + curConfig.baseUnit;
+					res.h = svgedit.units.convertUnit(res.h) + curConfig.baseUnit;
+				}
+
+				$('#canvas_width').val(res.w);
+				$('#canvas_height').val(res.h);
+				$('#canvas_title').val(svgCanvas.getDocumentTitle());
+
+				$('#svg_docprops').show();
+			};
+			
 			var showPreferences = function() {
 				if (preferences) {return;}
 				preferences = true;
@@ -4517,7 +4538,7 @@ TODOS
 					}, evt: 'mouseup', key: ['S', true]},
 					{sel: '#tool_export', fn: clickExport, evt: 'mouseup'},
 					{sel: '#tool_open', fn: clickOpen, evt: 'mouseup', key: ['O', true]},
-					{sel: '#tool_open_url', fn: showDocProperties, evt: 'mouseup'},
+					{sel: '#tool_open_url', fn: showOpenURL, evt: 'mouseup'},
 					{sel: '#tool_import', fn: clickImport, evt: 'mouseup'},
 					{sel: '#tool_source', fn: showSourceEditor, evt: 'click', key: ['U', true]},
 					{sel: '#tool_wireframe', fn: clickWireframe, evt: 'click', key: ['F', true]},
