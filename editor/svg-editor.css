@@ -1190,7 +1190,7 @@ ul li.current {
 	color: #444;
 }
 
-#canvas_title, #canvas_bg_url {
+#canvas_title, #canvas_bg_url, #open_url_text {
 	display: block;
 	width: 96%;
 }

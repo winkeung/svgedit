@@ -3871,8 +3871,29 @@ TODOS
 				hideDocProperties();
 			};
 
-			var saveOpenURL = function() {
+			function getText(svg_url){
+				// read text from URL location
+				var request = new XMLHttpRequest();
+				request.open('GET', svg_url, false);
+				//xhr.overrideMimeType("image/svg+xml");
 				
+				request.send(null);
+				request.onreadystatechange = function () {
+					if (request.readyState === 4 && request.status === 200) {
+						//var type = request.getResponseHeader('Content-Type');
+						//if (type.indexOf("text") !== 1) {
+							//return request.responseText;
+							return request.responseXML.documentElement;
+						//}
+					}
+				}
+			}
+			
+			var saveOpenURL = function() {
+				var svg_url = $('#open_url_text').val();
+				console.log("svg_url=" + svg_url);
+				var svg_content = getText(svg_url);
+				console.log("svg_content=" + svg_content);
 				hideOpenURL();
 			};
 			
