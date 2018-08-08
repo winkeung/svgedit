@@ -4521,6 +4521,13 @@ this.setSvgString = function(xmlString, preventUndo) {
 						}).attr('src', url);
 					}
 				}
+				else if (val.indexOf('file:') != 0) {
+					url = $('#open_url_text').val() + val;
+					//$(new Image()).load(function () {
+					image.setAttributeNS(NS.XLINK, 'xlink:href', url);
+					image.setAttribute('alt', val); //preserve original name
+					//}).attr('src', url);
+				}
 				// Add to encodableImages if it loads
 				canvas.embedImage(val);
 			}
