@@ -3761,6 +3761,26 @@ TODOS
 
 				$('#svg_open_url').show();
 			};
+
+			function download(filename, text) {
+				var pom = document.createElement('a');
+				pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+				pom.setAttribute('download', filename);
+
+				if (document.createEvent) {
+					var event = document.createEvent('MouseEvents');
+					event.initEvent('click', true, true);
+					pom.dispatchEvent(event);
+				}
+				else {
+					pom.click();
+				}
+			}
+			
+			var showSaveAs = function() {
+				origSource = svgCanvas.getSvgString();
+				download("test.svg", origSource);
+			};
 			
 			var showPreferences = function() {
 				if (preferences) {return;}
@@ -4563,6 +4583,7 @@ TODOS
 					{sel: '#tool_export', fn: clickExport, evt: 'mouseup'},
 					{sel: '#tool_open', fn: clickOpen, evt: 'mouseup', key: ['O', true]},
 					{sel: '#tool_open_url', fn: showOpenURL, evt: 'mouseup'},
+					{sel: '#tool_save_as', fn: showSaveAs, evt: 'mouseup'},
 					{sel: '#tool_import', fn: clickImport, evt: 'mouseup'},
 					{sel: '#tool_source', fn: showSourceEditor, evt: 'click', key: ['U', true]},
 					{sel: '#tool_wireframe', fn: clickWireframe, evt: 'click', key: ['F', true]},
