@@ -4522,7 +4522,7 @@ this.setSvgString = function(xmlString, preventUndo) {
 					}
 				}
 				else if (val.indexOf('file:') != 0) {
-					url = $('#open_url_text').val() + val;
+					url = "file:///" + $('#open_url_text').val() + '/' + val;
 					//$(new Image()).load(function () {
 					image.setAttributeNS(NS.XLINK, 'xlink:href', url);
 					image.setAttribute('alt', val); //preserve original name
