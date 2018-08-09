@@ -3779,7 +3779,7 @@ TODOS
 			
 			var showSaveAs = function() {
 				origSource = svgCanvas.getSvgString();
-				download("test.svg", origSource);
+				download(editor.svgfilename, origSource);
 			};
 			
 			var showPreferences = function() {
@@ -5094,6 +5094,7 @@ TODOS
 								updateCanvas();
 							};
 							reader.readAsText(f.files[0]);
+							editor.svgfilename = f.files[0].name;
 						}
 					});
 				});
