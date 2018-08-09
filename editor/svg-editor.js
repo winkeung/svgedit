@@ -3779,7 +3779,27 @@ TODOS
 			
 			var showSaveAs = function() {
 				origSource = svgCanvas.getSvgString();
-				download(editor.svgfilename, origSource);
+						// convert string into XML document
+				var newDoc = svgedit.utilities.text2xml(origSource);
+				var elements = newDoc.getElementsByTagName("image")
+				for (i=0; i<elements.length; i++) {
+					var val = elements[i].getAttribute('alt');
+					elements[i].setAttribute('xlink:href', val);
+					elements[i].removeAttribute('alt');
+				}
+				/*
+				newDoc.find('image').each(function() {
+					console.log("here");
+					var image = this;
+					var val = this.getAttribute('alt');
+					if (val) {
+							image.setAttributeNS(NS.XLINK, 'xlink:href', val);
+							image.removeAttribute('alt');						
+					}
+				});*/
+			
+				var str = (new XMLSerializer()).serializeToString(newDoc);
+				download(editor.svgfilename, str);
 			};
 			
 			var showPreferences = function() {
