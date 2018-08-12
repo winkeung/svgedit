@@ -586,6 +586,7 @@ TODOS
 					'open_url': 'open_url.png',
 					'save_as': 'save_as.png',
 					'source': 'source.png',
+					'flip_hori': 'source.png',
 					'docprops': 'document-properties.png',
 					'wireframe': 'wireframe.png',
 
@@ -646,6 +647,7 @@ TODOS
 					'#tool_save_as > div': 'save_as',
 					'#tool_import div div': 'import',
 					'#tool_source': 'source',
+					'#tool_flip_hori': 'flip_hori',
 					'#tool_docprops > div': 'docprops',
 					'#tool_wireframe': 'wireframe',
 

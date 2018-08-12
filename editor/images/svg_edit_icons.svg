@@ -492,6 +492,13 @@
   <line id="svg_64" stroke-width="3" fill="none" stroke="#aa0000" y2="8" x2="39" y1="26" x1="51"/>
  </svg>
 </g>
+
+<g id="flip_hori">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 52">
+  <path id="svg_1" d="m47.53161,46.43583l-17.96489,-0.19184l0,-40.56624l17.96489,40.75808z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#00ffff"/>
+  <path fill-opacity="0" id="svg_2" d="m8.31929,46.71057l17.86854,-0.19184l0,-40.56624l-17.86854,40.75808z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#000000"/>
+</svg>  
+</g>
  
 <g id="wireframe">
  <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
