@@ -5130,6 +5130,7 @@ TODOS
 							};
 							reader.readAsText(f.files[0]);
 							editor.svgfilename = f.files[0].name;
+							document.title = f.files[0].name;
 						}
 					});
 				});
