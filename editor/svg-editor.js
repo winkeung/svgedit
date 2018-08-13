@@ -1033,10 +1033,21 @@ TODOS
 				var newDoc = svgedit.utilities.text2xml(origSource);
 				var width = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("width"));
 				var height = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("height"));
+				// flip <g>
 				var elements = newDoc.getElementsByTagName("g");
 				for (var i=0; i<elements.length; i++) {					
 					elements[i].setAttribute("transform", "translate(" + width.toString() + ") scale(-1,1)");
 				}
+				// flip <text>, the effect will be canceled out by the flip on <g>, so text remain not flipped
+				elements = newDoc.getElementsByTagName("text");
+				var transform_value, x, y;
+				for (var i=0; i<elements.length; i++) {
+					transform_value = elements[i].getAttribute("transform");
+					if (transform_value==null) transform_value = "";
+					x = elements[i].getAttribute("x");
+					elements[i].setAttribute("transform", transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)");
+				}
+				
 				var anXMLSerializer = new XMLSerializer();
 				origSource = anXMLSerializer.serializeToString(newDoc);
 				
