@@ -1029,6 +1029,17 @@ TODOS
 
 				editingsource = true;
 				origSource = svgCanvas.getSvgString();
+				
+				var newDoc = svgedit.utilities.text2xml(origSource);
+				var width = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("width"));
+				var height = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("height"));
+				var elements = newDoc.getElementsByTagName("g");
+				for (var i=0; i<elements.length; i++) {					
+					elements[i].setAttribute("transform", "translate(" + width.toString() + ") scale(-1,1)");
+				}
+				var anXMLSerializer = new XMLSerializer();
+				origSource = anXMLSerializer.serializeToString(newDoc);
+				
 				$('#save_output_btns').toggle(!!forSaving);
 				$('#tool_source_back').toggle(!forSaving);
 				$('#svg_source_textarea').val(origSource);
