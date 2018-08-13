@@ -1023,6 +1023,18 @@ TODOS
 				$('#svg_source_editor').fadeIn();
 				$('#svg_source_textarea').focus();
 			};
+			
+			var showSourceEditor_flip_hori = function(e, forSaving) {
+				if (editingsource) {return;}
+
+				editingsource = true;
+				origSource = svgCanvas.getSvgString();
+				$('#save_output_btns').toggle(!!forSaving);
+				$('#tool_source_back').toggle(!forSaving);
+				$('#svg_source_textarea').val(origSource);
+				$('#svg_source_editor').fadeIn();
+				$('#svg_source_textarea').focus();
+			};
 
 			var togglePathEditMode = function(editmode, elems) {
 				$('#path_node_panel').toggle(editmode);
@@ -4608,6 +4620,7 @@ TODOS
 					{sel: '#tool_save_as', fn: showSaveAs, evt: 'mouseup'},
 					{sel: '#tool_import', fn: clickImport, evt: 'mouseup'},
 					{sel: '#tool_source', fn: showSourceEditor, evt: 'click', key: ['U', true]},
+					{sel: '#tool_flip_hori', fn: showSourceEditor_flip_hori, evt: 'click'},
 					{sel: '#tool_wireframe', fn: clickWireframe, evt: 'click', key: ['F', true]},
 					{sel: '#tool_source_cancel,.overlay,#tool_docprops_cancel,#tool_prefs_cancel,#tool_open_url_cancel', fn: cancelOverlays, evt: 'click', key: ['esc', false, false], hidekey: true},
 					{sel: '#tool_source_save', fn: saveSourceEditor, evt: 'click'},
