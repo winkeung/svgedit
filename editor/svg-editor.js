@@ -587,6 +587,7 @@ TODOS
 					'save_as': 'save_as.png',
 					'source': 'source.png',
 					'flip_hori': 'source.png',
+					'tspan2text': 'source.png',
 					'docprops': 'document-properties.png',
 					'wireframe': 'wireframe.png',
 
@@ -648,6 +649,7 @@ TODOS
 					'#tool_import div div': 'import',
 					'#tool_source': 'source',
 					'#tool_flip_hori': 'flip_hori',
+					'#tool_tspan2text': 'tspan2text',
 					'#tool_docprops > div': 'docprops',
 					'#tool_wireframe': 'wireframe',
 

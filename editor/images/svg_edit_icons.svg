@@ -499,6 +499,13 @@
   <path fill-opacity="0" id="svg_2" d="m8.31929,46.71057l17.86854,-0.19184l0,-40.56624l-17.86854,40.75808z" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke="#000000" fill="#000000"/>
 </svg>  
 </g>
+
+<g id="tspan2text">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 52">
+	<text font-weight="bold" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="20" id="svg_1" y="31.02698" x="27.22607" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">tspan</text>
+	<text transform="matrix(1.89655, 0, 0, 2.08706, -36.8941, 3.5639)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="20" id="svg_2" y="17.73969" x="32.63582" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#ff0000">X</text>
+</svg>  
+</g>
  
 <g id="wireframe">
  <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
