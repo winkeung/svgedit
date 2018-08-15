@@ -1029,10 +1029,10 @@ TODOS
 			}
 
 			function flip_hori_g_recursive(node, width) {
-				console.log("flip_hori_g_recursive");
+				//console.log("flip_hori_g_recursive");
 				var nodes = node.childNodes;
 				for (var i = 0; i < nodes.length ;i++) {
-					console.log("flip_hori_g_recursive " + i.toString() + nodes[i].tagName);
+					//console.log("flip_hori_g_recursive " + i.toString() + nodes[i].tagName);
 					if (nodes[i].nodeType == 1 && nodes[i].tagName == "g") {
 						var transform_value = nodes[i].getAttribute("transform");
 						if (transform_value == null) transform_value = "";
@@ -1068,8 +1068,42 @@ TODOS
 				for (var i=0; i<elements.length; i++) {
 					transform_value = elements[i].getAttribute("transform");
 					if (transform_value==null) transform_value = "";
-					x = elements[i].getAttribute("x");
+					x = elements[i].getAttribute("x"); // TODO: check if x is a single no., if not, skip exec next line
 					elements[i].setAttribute("transform", transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)");
+				}
+				
+				// flip those <image> which act as text label, the effect will be canceled out by the flip on <g>, so text remain not flipped
+				elements = newDoc.getElementsByTagName("image");
+				var text_orientation, preserve_orientation, nodeValue, doc;
+				var parser = new DOMParser();
+				for (var i=0; i<elements.length; i++) {
+					nodeValue = elements[i].textContent;
+					if (!nodeValue) continue;
+					
+					//console.log("nodeValue=" + nodeValue);
+					
+					doc = parser.parseFromString("<t " + nodeValue +  "/>", "application/xml");
+					text_orientation = doc.documentElement.getAttribute("text_orientation");
+					preserve_orientation = doc.documentElement.getAttribute("preserve_orientation");
+
+					//text_orientation = elements[i].getAttribute("text_orientation");
+					if (text_orientation == 'up' || text_orientation == 'down' ) {
+						//console.log("up")
+						transform_value = elements[i].getAttribute("transform");
+						if (!transform_value) transform_value = "";
+						x = parseFloat(elements[i].getAttribute("x")) + parseFloat(elements[i].getAttribute("width")) / 2;
+						transform_value = transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)";
+						transform_value = simplify_transform_str(transform_value);
+						elements[i].setAttribute("transform", transform_value);
+					}
+					else if (text_orientation == 'left' || text_orientation == 'right' ) {
+						transform_value = elements[i].getAttribute("transform");
+						if (!transform_value) transform_value = "";
+						y = parseFloat(elements[i].getAttribute("y")) + parseFloat(elements[i].getAttribute("height")) / 2; 
+						transform_value = transform_value + " translate(0," + (y*2).toString() + ") scale(1,-1)";
+						transform_value = simplify_transform_str(transform_value);
+						elements[i].setAttribute("transform", transform_value);
+					}
 				}
 				
 				var anXMLSerializer = new XMLSerializer();
