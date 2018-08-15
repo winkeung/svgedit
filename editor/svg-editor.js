@@ -1117,6 +1117,78 @@ TODOS
 				$('#svg_source_editor').fadeIn();
 				$('#svg_source_textarea').focus();
 			};
+			
+			var showSourceEditor_tspan2text = function(e, forSaving) {
+				if (editingsource) {return;}
+
+				editingsource = true;
+				origSource = svgCanvas.getSvgString();
+				
+				var newDoc = svgedit.utilities.text2xml(origSource);
+				var width = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("width"));
+				var height = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("height"));
+				
+				// flip <g>
+				flip_hori_g_recursive(newDoc.documentElement, width);
+				
+				/*var elements = newDoc.getElementsByTagName("g");
+				for (var i=0; i<elements.length; i++) {					
+					elements[i].setAttribute("transform", "translate(" + width.toString() + ") scale(-1,1)");
+				}*/
+				
+				// flip <text>, the effect will be canceled out by the flip on <g>, so text remain not flipped
+				elements = newDoc.getElementsByTagName("text");
+				var transform_value, x, y;
+				for (var i=0; i<elements.length; i++) {
+					transform_value = elements[i].getAttribute("transform");
+					if (transform_value==null) transform_value = "";
+					x = elements[i].getAttribute("x"); // TODO: check if x is a single no., if not, skip exec next line
+					elements[i].setAttribute("transform", transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)");
+				}
+				
+				// flip those <image> which act as text label, the effect will be canceled out by the flip on <g>, so text remain not flipped
+				elements = newDoc.getElementsByTagName("image");
+				var text_orientation, preserve_orientation, nodeValue, doc;
+				var parser = new DOMParser();
+				for (var i=0; i<elements.length; i++) {
+					nodeValue = elements[i].textContent;
+					if (!nodeValue) continue;
+					
+					//console.log("nodeValue=" + nodeValue);
+					
+					doc = parser.parseFromString("<t " + nodeValue +  "/>", "application/xml");
+					text_orientation = doc.documentElement.getAttribute("text_orientation");
+					preserve_orientation = doc.documentElement.getAttribute("preserve_orientation");
+
+					//text_orientation = elements[i].getAttribute("text_orientation");
+					if (text_orientation == 'up' || text_orientation == 'down' ) {
+						//console.log("up")
+						transform_value = elements[i].getAttribute("transform");
+						if (!transform_value) transform_value = "";
+						x = parseFloat(elements[i].getAttribute("x")) + parseFloat(elements[i].getAttribute("width")) / 2;
+						transform_value = transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)";
+						transform_value = simplify_transform_str(transform_value);
+						elements[i].setAttribute("transform", transform_value);
+					}
+					else if (text_orientation == 'left' || text_orientation == 'right' ) {
+						transform_value = elements[i].getAttribute("transform");
+						if (!transform_value) transform_value = "";
+						y = parseFloat(elements[i].getAttribute("y")) + parseFloat(elements[i].getAttribute("height")) / 2; 
+						transform_value = transform_value + " translate(0," + (y*2).toString() + ") scale(1,-1)";
+						transform_value = simplify_transform_str(transform_value);
+						elements[i].setAttribute("transform", transform_value);
+					}
+				}
+				
+				var anXMLSerializer = new XMLSerializer();
+				origSource = anXMLSerializer.serializeToString(newDoc);
+				
+				$('#save_output_btns').toggle(!!forSaving);
+				$('#tool_source_back').toggle(!forSaving);
+				$('#svg_source_textarea').val(origSource);
+				$('#svg_source_editor').fadeIn();
+				$('#svg_source_textarea').focus();
+			};
 
 			var togglePathEditMode = function(editmode, elems) {
 				$('#path_node_panel').toggle(editmode);
@@ -4703,6 +4775,7 @@ TODOS
 					{sel: '#tool_import', fn: clickImport, evt: 'mouseup'},
 					{sel: '#tool_source', fn: showSourceEditor, evt: 'click', key: ['U', true]},
 					{sel: '#tool_flip_hori', fn: showSourceEditor_flip_hori, evt: 'click'},
+					{sel: '#tool_tspan2text', fn: showSourceEditor_tspan2text, evt: 'click'},
 					{sel: '#tool_wireframe', fn: clickWireframe, evt: 'click', key: ['F', true]},
 					{sel: '#tool_source_cancel,.overlay,#tool_docprops_cancel,#tool_prefs_cancel,#tool_open_url_cancel', fn: cancelOverlays, evt: 'click', key: ['esc', false, false], hidekey: true},
 					{sel: '#tool_source_save', fn: saveSourceEditor, evt: 'click'},
