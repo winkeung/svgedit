@@ -1065,6 +1065,7 @@ TODOS
 				}*/
 				
 				// flip <text>, the effect will be canceled out by the flip on <g>, so text remain not flipped
+				// TODO: current code assume text middle align, need to take care other cases. (e.g. each char has its own x,y specified)
 				elements = newDoc.getElementsByTagName("text");
 				var transform_value, x, y;
 				for (var i=0; i<elements.length; i++) {
@@ -1125,63 +1126,45 @@ TODOS
 				origSource = svgCanvas.getSvgString();
 				
 				var newDoc = svgedit.utilities.text2xml(origSource);
-				var width = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("width"));
-				var height = parseFloat(newDoc.getElementsByTagName("svg")[0].getAttribute("height"));
 				
-				// flip <g>
-				flip_hori_g_recursive(newDoc.documentElement, width);
-				
-				/*var elements = newDoc.getElementsByTagName("g");
-				for (var i=0; i<elements.length; i++) {					
-					elements[i].setAttribute("transform", "translate(" + width.toString() + ") scale(-1,1)");
-				}*/
-				
-				// flip <text>, the effect will be canceled out by the flip on <g>, so text remain not flipped
 				elements = newDoc.getElementsByTagName("text");
-				var transform_value, x, y;
-				for (var i=0; i<elements.length; i++) {
-					transform_value = elements[i].getAttribute("transform");
-					if (transform_value==null) transform_value = "";
-					x = elements[i].getAttribute("x"); // TODO: check if x is a single no., if not, skip exec next line
-					elements[i].setAttribute("transform", transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)");
-				}
+				console.log("elements.length=" + elements.length.toString());
 				
-				// flip those <image> which act as text label, the effect will be canceled out by the flip on <g>, so text remain not flipped
-				elements = newDoc.getElementsByTagName("image");
-				var text_orientation, preserve_orientation, nodeValue, doc;
-				var parser = new DOMParser();
-				for (var i=0; i<elements.length; i++) {
-					nodeValue = elements[i].textContent;
-					if (!nodeValue) continue;
-					
-					//console.log("nodeValue=" + nodeValue);
-					
-					doc = parser.parseFromString("<t " + nodeValue +  "/>", "application/xml");
-					text_orientation = doc.documentElement.getAttribute("text_orientation");
-					preserve_orientation = doc.documentElement.getAttribute("preserve_orientation");
-
-					//text_orientation = elements[i].getAttribute("text_orientation");
-					if (text_orientation == 'up' || text_orientation == 'down' ) {
-						//console.log("up")
-						transform_value = elements[i].getAttribute("transform");
-						if (!transform_value) transform_value = "";
-						x = parseFloat(elements[i].getAttribute("x")) + parseFloat(elements[i].getAttribute("width")) / 2;
-						transform_value = transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)";
-						transform_value = simplify_transform_str(transform_value);
-						elements[i].setAttribute("transform", transform_value);
-					}
-					else if (text_orientation == 'left' || text_orientation == 'right' ) {
-						transform_value = elements[i].getAttribute("transform");
-						if (!transform_value) transform_value = "";
-						y = parseFloat(elements[i].getAttribute("y")) + parseFloat(elements[i].getAttribute("height")) / 2; 
-						transform_value = transform_value + " translate(0," + (y*2).toString() + ") scale(1,-1)";
-						transform_value = simplify_transform_str(transform_value);
-						elements[i].setAttribute("transform", transform_value);
-					}
+				var attributes, nodes, newElement, isTspanFound;
+				
+				//for (var i=0; i<elements.length; i++) {
+				while (elements.length!=0) {
+					//console.log("i=" + i.toString());
+					attributes = elements[0].attributes;
+					nodes = elements[0].childNodes;
+					isTspanFound = false;
+					for (var j=0; j<nodes.length; j++) {
+						//console.log("  j=" + j.toString());
+						if (nodes[j].nodeType == 1 && nodes[j].tagName == "tspan") {
+							console.log("  tspan" + j.toString());
+							isTspanFound = true;
+							//nodes[j].tagName = "text"; //tagName is read only
+							//newElement = newDoc.createElement("text");
+							//newElement.innerHTML = nodes[j].innerHTML;
+							//newElement.attributes = nodes[j].attributes;
+							for (var k=0; k<attributes.length; k++) {
+								if (attributes[k].name != "id") {
+									nodes[j].setAttribute(attributes[k].name, attributes[k].value);
+								}
+							}
+							elements[0].parentNode.insertBefore(nodes[j].cloneNode(true), elements[0]);
+						}
+ 					}
+					if (isTspanFound)
+						elements[0].parentNode.removeChild(elements[0]);
+					elements = newDoc.getElementsByTagName("text");
 				}
 				
 				var anXMLSerializer = new XMLSerializer();
 				origSource = anXMLSerializer.serializeToString(newDoc);
+				origSource = origSource.replace(/<tspan/g, "<text");
+				origSource = origSource.replace(/<\/tspan>/g, "</text>");
+				
 				
 				$('#save_output_btns').toggle(!!forSaving);
 				$('#tool_source_back').toggle(!forSaving);
