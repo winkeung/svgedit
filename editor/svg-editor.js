@@ -1045,6 +1045,73 @@ TODOS
 					}
 				}
 			}
+			
+			// Find the center coordinate (x,y) for single/multi line text.
+			function findTextCenter(ele) {
+				var x, y, Xs, Ys, XYs, x_idx, y_idx, xy_idx, font_size, text_anchor;
+				
+				Xs = ele.getAttribute("x").split(/[ ]+/);
+				Ys = ele.getAttribute("y").split(/[ ]+/);
+				font_size = parseFloat(ele.getAttribute("font-size"));
+				if (isNaN(font_size)) font_size = 16; // default font-size if not specified
+				//console.log(ele.textContent +  " font_size= " + font_size.toString());
+				text_anchor = ele.getAttribute("text-anchor");
+				
+				x_idx = 0;
+				y_idx = 0;
+				xy_idx = 0;
+				XYs = [];
+				while (x_idx < Xs.length || y_idx < Ys.length) {
+					if (x_idx == Xs.length) x_idx--;
+					if (y_idx == Ys.length) y_idx--;
+					XYs[xy_idx++] = [parseFloat(Xs[x_idx++]), parseFloat(Ys[y_idx++])];
+				}
+				
+				var  w, h; // w, h : char width and line height (estimated)
+				var minX, maxX, minY, maxY, prevX, prevY;
+				var text_len;
+				minX =  XYs[0][0];
+				minY =  XYs[0][1];
+				maxX =  XYs[0][0];
+				maxY =  XYs[0][1];
+				prevX =  XYs[0][0];
+				prevY =  XYs[0][1];
+				if (text_anchor == "middle") {
+					w = 0;
+				}
+				else {
+					w = font_size * .6; // TODO: use a better way to handle font width
+					
+					// make sure each char has a (x,y) specified, no more, no less.
+					text_len = ele.textContent.length;
+					for (var i = XYs.length; i < text_len; i++) {
+						XYs[XYs.length] = [XYs[XYs.length-1][0] + w, XYs[XYs.length-1][1]];
+					}
+					
+					if (text_len < XYs.length) {
+						XYs.splice(text_len, XYs.length - text_len);
+					}
+				}
+				h = font_size; // TODO: use a better way to handle font height
+				for (var i = 1; i < XYs.length; i++) {
+					// assume char is arranged in sequence
+					if (prevY == XYs[i][1]) { // this char is on same row as previous char
+						w = XYs[i][0] - prevX;
+					}
+					if (prevY != XYs[i][1]) { // this char is NOT on same row as previous char
+						h = XYs[i][1] - prevY;
+					}
+					prevX =  XYs[i][0];
+					prevY =  XYs[i][1];
+					
+					if (minX > XYs[i][0]) minX =  XYs[i][0];
+					if (minY > XYs[i][1]) minY =  XYs[i][1];
+					if (maxX < XYs[i][0]) maxX =  XYs[i][0];
+					if (maxY < XYs[i][1]) maxY =  XYs[i][1];
+				}
+				
+				return [(minX + maxX + w) / 2, (minY + maxY - h) / 2];
+			}
 
 			var showSourceEditor_flip_hori = function(e, forSaving) {
 				if (editingsource) {return;}
@@ -1067,11 +1134,13 @@ TODOS
 				// flip <text>, the effect will be canceled out by the flip on <g>, so text remain not flipped
 				// TODO: current code assume text middle align, need to take care other cases. (e.g. each char has its own x,y specified)
 				elements = newDoc.getElementsByTagName("text");
-				var transform_value, x, y;
+				var transform_value, x, y, center;
 				for (var i=0; i<elements.length; i++) {
 					transform_value = elements[i].getAttribute("transform");
 					if (transform_value==null) transform_value = "";
-					x = elements[i].getAttribute("x"); // TODO: check if x is a single no., if not, skip exec next line
+					//x = elements[i].getAttribute("x"); // TODO: check if x is a single no., if not, skip exec next line
+					center = findTextCenter(elements[i]);
+					x = center[0];
 					elements[i].setAttribute("transform", transform_value + " translate(" + (x*2).toString() + ") scale(-1,1)");
 				}
 				
@@ -1087,7 +1156,7 @@ TODOS
 					
 					doc = parser.parseFromString("<t " + nodeValue +  "/>", "application/xml");
 					text_orientation = doc.documentElement.getAttribute("text_orientation");
-					preserve_orientation = doc.documentElement.getAttribute("preserve_orientation");
+					preserve_orientation = doc.documentElement.getAttribute("preserve_orientation"); // this attri is used when picture is rotated
 
 					//text_orientation = elements[i].getAttribute("text_orientation");
 					if (text_orientation == 'up' || text_orientation == 'down' ) {
